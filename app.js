@@ -30,8 +30,8 @@ app.use(cookieParser());
 //设置public为存放静态文件的文件夹
 app.use(express.static(path.join(__dirname, 'public')));
 //路由控制器
-app.use('/', routes);
-app.use('/users', users);
+//通过./routes/index.js调用route方法
+routes(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
