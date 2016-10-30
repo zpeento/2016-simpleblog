@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 //生成express实例
 var app = express();
 //settings中存放的是数据库的配置信息
@@ -15,11 +14,16 @@ var settings = require('./settings');
 var session = require('express-session');
 //将获取的session信息储存到mongodb中
 var MongoStore = require('connect-mongo')(session);
+//使用connect-flash中间件
+
+//调用node.js核心模块crypto给密码加密
+// var crypto = require('crypto');
 // view engine setup
 //设置views为存放模板引擎的位置
 app.set('views', path.join(__dirname, 'views'));
 //设置模板引擎为ejs
 app.set('view engine', 'ejs');
+//调用connect-flash中间件
 
 // uncomment after placing your favicon in /public
 //public文件夹中的favicon.ico为favicon
@@ -36,6 +40,20 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //路由控制器
 //通过./routes/index.js调用route方法
+app.use(session({
+  secret: settings.cookieSecret,
+  key: settings.db,//cookie name
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
+  resave:false,
+  saveUninitialized:true,
+  store: new MongoStore({
+    // db: settings.db,
+    url: 'mongodb://localhost/blog',
+    // port: settings.port
+  })
+}));
+var flash = require('connect-flash');
+app.use(flash());
 routes(app);
 
 // catch 404 and forward to error handler
@@ -73,27 +91,6 @@ app.use(function(err, req, res, next) {
 //通过express-session 和 connect-mongo模块实现了将信息存储到mongodb中。
 //secret用来对cookie加密 ，key的值为cookie的名字，通过设定maxage设置cookie的生存期。
 //store参数为MongoStore的一个实例把信息存储到mongodb中
-// app.use(session({
-//   secret: settings.cookieSecret,
-//   key: settings.db,//cookie name
-//   cookie:{maxAge:1000*60*60*24*30},//30 days
-//   store: new MongoStore({
-//     db:settings.db,
-//     host: settings.host,
-//     port:settings.port
-//   })
-// }))
-app.use(session({
-  secret: settings.cookieSecret,
-  key: settings.db,//cookie name
-  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
-  resave:false,
-  saveUninitialized:true,
-  store: new MongoStore({
-    // db: settings.db,
-    url: 'mongodb://localhost/blog',
-    // port: settings.port
-  })
-}));
+
 //导出app实例供其他模块调用
 module.exports = app;
