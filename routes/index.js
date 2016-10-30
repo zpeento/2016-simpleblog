@@ -60,7 +60,7 @@ module.exports = function(app) {
       User.get(newUser.name,function (err, user){
         if (err) {
           req.flash('error', err);
-          return res.redirect('/');
+          return res.redirect('/reg');
         }
         if (user){
           req.flash('error','用户已存在!');
@@ -71,16 +71,10 @@ module.exports = function(app) {
             req.flash('error',err);
             return res.redirect('/reg');
           }
-          newUser.save(function (err,user) {
-            if (err) {
-              req.flash('error',err);
-              return res.redirect('/reg');
-            }
-            //将用户信息存入会话
-            req.session.user = newUser;
-            req.flash('success','注册成功');
-            res.redirect('/');
-          })
+          //将用户信息存入会话
+          req.session.user = newUser;
+          req.flash('success','注册成功');
+          res.redirect('/');
         })
       })
   	});
