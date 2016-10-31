@@ -10,6 +10,7 @@ var router = express.Router();
 
 // module.exports = router;
 
+
 module.exports = function(app) {
   	//首页get
   	app.get('/',function(req,res){
@@ -24,6 +25,7 @@ module.exports = function(app) {
   	});
 
   	//注册页get
+    app.get('/reg', checkNotLogin);
   	app.get('/reg', function (req, res) {
     	var data = {
         title:'注册',
@@ -36,6 +38,7 @@ module.exports = function(app) {
 
 
     //注册页post
+    app.post('/reg', checkNotLogin);
   	app.post('/reg', function (req, res) {
       var name = req.body.name;
       var password = req.body.password;
@@ -78,7 +81,8 @@ module.exports = function(app) {
         })
       })
   	});
-
+    // app.get('/')
+    app.get('/login', checkNotLogin)
   	app.get('/login', function (req, res) {
       var data = {
         title:'登录',
@@ -88,6 +92,7 @@ module.exports = function(app) {
       }
   	  res.render('login', data);
 	  });
+    app.post('/login', checkNotLogin)
   	app.post('/login', function (req, res) {
       //生成密码的md5值
       var md5 =crypto.createHash('md5');
@@ -110,14 +115,33 @@ module.exports = function(app) {
         res.redirect('/');
       })
   	});
+    app.get('/post', checkLogin)
  	  app.get('/post', function (req, res) {
     	res.render('post', { title: '发表' });
   	});
+    app.post('/post', checkLogin)
   	app.post('/post', function (req, res) {
   	});
+    app.get('/logout', checkLogin)
   	app.get('/logout', function (req, res) {
       req.session.user = null;
       req.flash('success','登出成功');     
       res.redirect('/');
   	});
+
+
+    function checkLogin(req, res, next) {
+      if (!req.session.user){
+        req.flash('error','未登录');
+        res.redirect('/login');
+      }
+      next();
+    }
+    function checkNotLogin(req, res, next) {
+      if (req.session.user) {
+        req.flash('error','已登录');
+        res.redirect('back');//返回之前页面
+      }
+      next();
+    }
 };
