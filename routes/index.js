@@ -117,7 +117,13 @@ module.exports = function(app) {
   	});
     app.get('/post', checkLogin)
  	  app.get('/post', function (req, res) {
-    	res.render('post', { title: '发表' });
+    	var data = {
+        title:'登录',
+        user: req.session.user,
+        success: req.flash('success').toString(),
+        error:req.flash('error').toString()
+      }
+      res.render('post', data);
   	});
     app.post('/post', checkLogin)
   	app.post('/post', function (req, res) {
