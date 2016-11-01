@@ -44,13 +44,13 @@ module.exports = function(app) {
           error:req.flash('error').toString()
         })
       })
-  		// var data = {
-  		// 	title:	'主页',
-  		// 	user: req.session.user,
-    //     success: req.flash('success').toString(),
-    //     error:req.flash('error').toString()
-  		// };
-  		// res.render('index',data);
+  		var data = {
+  			title:	'主页',
+  			user: req.session.user,
+        success: req.flash('success').toString(),
+        error:req.flash('error').toString()
+  		};
+  		res.render('index',data);
   	});
 
   	//注册页get
