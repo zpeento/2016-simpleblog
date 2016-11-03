@@ -11,3 +11,6 @@ crypto:用于生成散列值来加密密码。
 
 项目中用于开发的模块：
 supervisor:每次更新代码后自动重启应用(supervisor ./bin/www)。
+
+其他：
+markdown:博客文章使用markdown语法
