@@ -15,16 +15,11 @@ var session = require('express-session');
 //将获取的session信息储存到mongodb中
 var MongoStore = require('connect-mongo')(session);
 //使用connect-flash中间件
-
-//调用node.js核心模块crypto给密码加密
-// var crypto = require('crypto');
 // view engine setup
 //设置views为存放模板引擎的位置
 app.set('views', path.join(__dirname, 'views'));
 //设置模板引擎为ejs
 app.set('view engine', 'ejs');
-//调用connect-flash中间件
-
 // uncomment after placing your favicon in /public
 //public文件夹中的favicon.ico为favicon
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -38,8 +33,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 //设置public为存放静态文件的文件夹
 app.use(express.static(path.join(__dirname, 'public')));
-//路由控制器
-//通过./routes/index.js调用route方法
+
+//通过express-session 和 connect-mongo模块实现了将信息存储到mongodb中。
+//secret用来对cookie加密 ，key的值为cookie的名字，通过设定maxage设置cookie的生存期。
+//store参数为MongoStore的一个实例把信息存储到mongodb中
 app.use(session({
   secret: settings.cookieSecret,
   key: settings.db,//cookie name
@@ -52,8 +49,13 @@ app.use(session({
     // port: settings.port
   })
 }));
+
+//调用connect-flash中间件
 var flash = require('connect-flash');
 app.use(flash());
+
+//路由控制器
+//通过./routes/index.js调用route方法
 routes(app);
 
 // catch 404 and forward to error handler
@@ -88,9 +90,7 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-//通过express-session 和 connect-mongo模块实现了将信息存储到mongodb中。
-//secret用来对cookie加密 ，key的值为cookie的名字，通过设定maxage设置cookie的生存期。
-//store参数为MongoStore的一个实例把信息存储到mongodb中
+
 
 //导出app实例供其他模块调用
 module.exports = app;
