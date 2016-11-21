@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
+var posts = require('./routes/posts')
 //生成express实例
 var app = express();
 //settings中存放的是数据库的配置信息
@@ -56,8 +57,9 @@ app.use(flash());
 
 //路由控制器
 //通过./routes/index.js调用route方法
-routes(app);
-
+// routes(app);
+app.use('/',routes);
+app.use('/posts',posts);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
