@@ -61,9 +61,27 @@ app.use(session({
 // var flash = require('connect-flash');
 app.use(flash());
 
+app.use(require('express-formidable')({
+  uploadDir: path.join(__dirname,'public/images'),//上传文件目录
+  keepExtensions:true//保留后缀
+}))
 //路由控制器
 //通过./routes/index.js调用route方法
+// 设置模板全局常量
+app.locals.blog = {
+  title: pkg.name,
+  description: pkg.description
+};
+
+// 添加模板必需的三个变量
+app.use(function (req, res, next) {
+  res.locals.user = req.session.user;
+  res.locals.success = req.flash('success').toString();
+  res.locals.error = req.flash('error').toString();
+  next();
+});
 routes(app);
+
 // app.use('/',routes);
 // app.use('/posts',posts);
 // catch 404 and forward to error handler
